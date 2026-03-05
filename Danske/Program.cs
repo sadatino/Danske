@@ -37,7 +37,13 @@ builder.Services.AddSwaggerGen(c =>
 var connectionString = builder.Configuration.GetConnectionString("DanskeDb");
 
 var dbPath = connectionString?.Replace("Data Source=", "");
-Directory.CreateDirectory(Path.GetDirectoryName(dbPath)!);
+var dbDir = Path.GetDirectoryName(Path.GetFullPath(dbPath!));
+if (!string.IsNullOrEmpty(dbDir))
+{
+    Directory.CreateDirectory(dbDir);
+}
+
+Console.WriteLine($"connectionString:{connectionString},\n dbPath: {dbPath}, \n dbDir: {dbDir}");
 
 builder.Services.AddDbContext<DanskeDbContext>(options =>
     options.UseSqlite(connectionString));

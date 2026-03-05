@@ -1,0 +1,10 @@
+services:
+  danske:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - danske_data:/app/Data
+
+volumes:
+  danske_data:
