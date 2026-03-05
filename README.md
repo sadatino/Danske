@@ -17,3 +17,5 @@ Assumptions:
         c. Monthly needs to start on the first day of the month, can`t have two monthly taxes on the same month
         
         d. Yearly - starts on January first, only one per year
+
+        e. Priority : Daily > Weekly > Monthly > Yearly
