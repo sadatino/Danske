@@ -5,7 +5,6 @@ using Danske.Domain.Aggregates.Tax;
 using Danske.Domain.Exceptions;
 using Danske.Domain.Interfaces.Repositories;
 using FluentAssertions;
-using MockQueryable.Moq;
 using Moq;
 using System.Net;
 
@@ -39,13 +38,13 @@ namespace Danske.Tests
         [Fact]
         public async Task Get_MunicipalityByName_ThrowsBusinessException_WhenNotExists()
         {
-            var data = GetMunicipalities().BuildMockDbSet().Object;
+            var municipalityName = "ihvdshkjsdkj";
 
             _repositoryMock
-                .Setup(x => x.GetAll(false))
-                .Returns(data);
+                .Setup(x => x.GetMunicipalityByNameAsync(municipalityName, It.IsAny<bool>()))
+                .ReturnsAsync((Municipality?)null);
 
-            var act = async () => await _service.GetMunicipalityByName("ihvdshkjsdkj");
+            var act = async () => await _service.GetMunicipalityByName(municipalityName);
 
             var exception = await Assert.ThrowsAsync<BusinessException>(act);
             exception.ErrorCode.Should().Be(HttpStatusCode.NotFound);
@@ -54,11 +53,14 @@ namespace Danske.Tests
         [Fact]
         public async Task Add_MunicipalityAsync_Add_WhenNotExists()
         {
-            var data = GetMunicipalities().BuildMockDbSet().Object;
+            var dto = new CreateMunicipalityDto
+            {
+                Name = "Kaunas"
+            };
 
             _repositoryMock
-                .Setup(x => x.GetAll(true))
-                .Returns(data);
+                .Setup(x => x.MunicipalityExistsByNameAsync(dto.Name))
+                .ReturnsAsync(false);
 
             _repositoryMock
                 .Setup(x => x.AddAsync(It.IsAny<Municipality>()))
@@ -68,11 +70,6 @@ namespace Danske.Tests
                     m.Id = 67;
                     return m;
                 });
-
-            var dto = new CreateMunicipalityDto
-            {
-                Name = "Kaunas"
-            };
 
             var result = await _service.AddMunicipalityAsync(dto);
 
@@ -127,12 +124,12 @@ namespace Danske.Tests
         [Fact]
         public async Task Delete_Municipality_ThrowsBusinessException_WhenNotExists()
         {
-            var data = GetMunicipalities().BuildMockDbSet().Object;
+            var municipalityName = "jngjkbngbjkewgb";
             _repositoryMock
-                .Setup(x => x.GetAll(false))
-                .Returns(data);
+                .Setup(x => x.GetMunicipalityByNameAsync(municipalityName, false))
+                .ReturnsAsync((Municipality?)null);
 
-            var act = async () => await _service.DeleteMunicipality("jngjkbngbjkewgb");
+            var act = async () => await _service.DeleteMunicipality(municipalityName);
 
             var exception = await Assert.ThrowsAsync<BusinessException>(act);
             exception.ErrorCode.Should().Be(HttpStatusCode.NotFound);

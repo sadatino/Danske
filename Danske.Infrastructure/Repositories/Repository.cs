@@ -51,7 +51,7 @@ namespace Danske.Infrastructure.Repositories
             }
         }
 
-        public IQueryable<TEntity> GetAll(bool readOnly = false, params Expression<Func<TEntity, object>>[] includes)
+        protected IQueryable<TEntity> GetAll(bool readOnly = false, params Expression<Func<TEntity, object>>[] includes)
         {
             try
             {
