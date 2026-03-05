@@ -9,6 +9,7 @@ Through swagger, every endpoint has a description and a summary
 
 Assumptions:
 1. business rules:
+   
   a. Daily tax can be any day of the year
 
   b. Weekly can be any week of the year
